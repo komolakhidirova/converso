@@ -1,6 +1,7 @@
 'use client'
 
 import soundwaves from '@/constants/soundwaves.json'
+import { addToSessionHistory } from '@/lib/actions/companion.actions'
 import { cn, configureAssistant, getSubjectColor } from '@/lib/utils'
 import { vapi } from '@/lib/vapi.sdk'
 import Lottie, { LottieRefCurrentProps } from 'lottie-react'
@@ -44,7 +45,10 @@ const CompanionComponent = ({
 	useEffect(() => {
 		const onCallStart = () => setCallStatus(CallStatus.ACTIVE)
 
-		const onCallEnd = () => setCallStatus(CallStatus.FINISHED)
+		const onCallEnd = () => {
+			setCallStatus(CallStatus.FINISHED)
+			addToSessionHistory(companionId)
+		}
 
 		const onMessage = (message: Message) => {
 			if (message.type === 'transcript' && message.transcriptType === 'final') {
@@ -150,7 +154,7 @@ const CompanionComponent = ({
 					<div className='user-avatar'>
 						<Image
 							src={userImage}
-							alt={userName}
+							alt={userName || 'user'}
 							width={130}
 							height={130}
 							className='rounded-lg'
